@@ -22,7 +22,7 @@ app.get('/hello', (request, response) => {
 });
 
 app.get('/urls', (request, response) => {
-  const templateVars = { urls: urlDatabase};
+  const templateVars = { urls: urlDatabase };
   response.render('urls_index', templateVars);
 });
 
