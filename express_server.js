@@ -21,6 +21,11 @@ app.get('/hello', (request, response) => {
   response.send('<html><body>Hello<b>World</b></body><html>\n');
 });
 
+app.get('/urls', (request, response) => {
+  const templateVars = { urls: urlDatabase};
+  response.render('urls_index', templateVars);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
