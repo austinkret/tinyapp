@@ -52,6 +52,7 @@ app.post('/urls', (request, response) => {
   urlDatabase[shortUrl] = request.body.longURL;
   const templateVars = {shortURL: shortUrl, longURL: urlDatabase[shortUrl]};
   response.render('urls_show', templateVars);
+  //stores the url is the urlDatabase with the short and long urls, viewable from the urls_show.ejs
 });
 
 app.get('/u/:shortURL', (request, response) => {
