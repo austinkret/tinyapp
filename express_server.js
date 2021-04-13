@@ -47,10 +47,17 @@ app.get('/urls/:shortURL', (request, response) => {
 });
 
 app.post('/urls', (request, response) => {
-  console.log(request.body);
-  response.send('OK');
+  const shortUrl = generateRandomString();
+  //use the generateRandomString function to generate the 6 digit alphanumeric string for the shortURL
+  urlDatabase[shortUrl] = request.body.longURL;
+  const templateVars = {shortURL: shortUrl, longURL: urlDatabase[shortUrl]};
+  response.render('urls_show', templateVars);
 });
 
+app.get('/u/:shortURL', (request, response) => {
+  const longURL = urlDatabase[request.params.shortURL];
+  response.redirect(longURL);
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
