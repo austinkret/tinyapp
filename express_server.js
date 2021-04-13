@@ -62,17 +62,16 @@ app.get('/u/:shortURL', (request, response) => {
 
 //delete urls from the database
 app.post('/urls/:shortURL/delete', (request, response) => {
-  const shortUrl = request.params.shortURL;
-  delete urlDatabase[shortUrl];
+  const deleteUrl = request.params.shortURL;
+  delete urlDatabase[deleteUrl];
 
   response.redirect('/urls');
 });
 
+//Edit/update the urls in the form
 app.post('/urls/:shortURL/edit', (request, response) => {
-  const shortUrl = request.params.shortURL;
-  urlDatabase[shortUrl];
-
-  response.redirect(`/urls/${shortUrl}`);
+  urlDatabase[request.params.shortURL] = request.body.longURL;
+  response.redirect(`/urls/`);
 });
 
 app.listen(PORT, () => {
