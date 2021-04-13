@@ -4,8 +4,7 @@ const PORT = 8080;
 
 app.set('view engine', 'ejs');
 
-const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.urlencoded({extended: true}));
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -37,6 +36,12 @@ app.get('/urls/:shortURL', (request, response) => {
   const templateVars = { shortURL: request.params.shortURL, longURL: urlDatabase[request.params.shortURL] };
   response.render('urls_show', templateVars);
 });
+
+app.post('urls', (request, response) => {
+  console.log(request.body);
+  response.send('OK');
+});
+
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
