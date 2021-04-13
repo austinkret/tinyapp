@@ -46,7 +46,7 @@ app.get('/urls/:shortURL', (request, response) => {
   response.render('urls_show', templateVars);
 });
 
-app.post('urls', (request, response) => {
+app.post('/urls', (request, response) => {
   console.log(request.body);
   response.send('OK');
 });
