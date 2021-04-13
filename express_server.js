@@ -60,6 +60,14 @@ app.get('/u/:shortURL', (request, response) => {
   response.redirect(longURL);
 });
 
+//delete urls from the database
+app.post('/urls/:shortURL/delete', (request, response) => {
+  const shortUrl = request.params.shortURL;
+  delete urlDatabase[shortUrl];
+
+  response.redirect('/urls');
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
