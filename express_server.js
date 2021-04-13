@@ -1,6 +1,12 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const { response } = require('express');
 const app = express();
 const PORT = 8080;
+
+app.set('view engine', 'ejs');
+app.use(cookieParser());
+app.use(express.urlencoded({extended: true}));
 
 const generateRandomString = function() {
   let char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -11,38 +17,47 @@ const generateRandomString = function() {
   return randomString;
 };
 
-app.set('view engine', 'ejs');
-
-app.use(express.urlencoded({extended: true}));
-
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
+//Direct all traffic to the /urls 'homepage'
 app.get('/', (request,response) => {
-  response.send('Hello!');
+  response.redirect('/urls/');
 });
 
-app.get('/urls.json', (request, response) => {
-  response.json(urlDatabase);
+app.post("/login", (request, response) => {
+  response.cookie('username', request.body.username);
+  response.redirect('/urls/');
 });
 
-app.get('/hello', (request, response) => {
-  response.send('<html><body>Hello<b>World</b></body><html>\n');
+app.post("/logout", (request, response) => {
+  response.clearCookie('username');
+  response.redirect("/urls");
 });
 
 app.get('/urls', (request, response) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = {
+    urls: urlDatabase,
+    username: request.cookies["username"]
+  };
   response.render('urls_index', templateVars);
 });
 
 app.get('/urls/new', (request, response) => {
-  response.render('urls_new');
+  const templateVars = {
+    username: request.cookies["username"]
+  };
+  response.render('urls_new', templateVars);
 });
 
 app.get('/urls/:shortURL', (request, response) => {
-  const templateVars = { shortURL: request.params.shortURL, longURL: urlDatabase[request.params.shortURL] };
+  const templateVars = {
+    shortURL: request.params.shortURL,
+    longURL: urlDatabase[request.params.shortURL],
+    username: request.cookies["username"]
+  };
   response.render('urls_show', templateVars);
 });
 

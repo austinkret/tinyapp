@@ -11,13 +11,23 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    </div>
-    <form method="POST" action="/login">
-      <div class="input-group mb-3">
-        <input type="username" class="form-control" placeholder="username" aria-label="username"
-          aria-describedby="basic-addon2">
-        <button type="submit" class="btn btn-outline-light" type="button">Login</button>
-      </div>
-    </form>
+    <% if(username) { %>
+      <h5 class="card-title" style="padding-right: 10px; color: rgb(226, 226, 226)">Logged In As: <%= username %>
+      </h5>
+      <form class="form-inline" method="POST" action="/logout">
+        <div class="input-group mb-3">
+          <button type="submit" class="btn btn-outline-light" type="button">Logout</button>
+        </div>
+      </form>
+      <% } else { %>
+        <form class="form-inline" method="POST" action="/login">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" name="username" placeholder="username" aria-label="username"
+              aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button type="submit" class="btn btn-outline-light" type="button">Login</button>
+            </div>
+        </form>
+        <% } %>
   </nav>
 </header>
