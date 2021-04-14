@@ -35,7 +35,11 @@ const users = {
     id: "user2RandomID",
     email: "user2@example.com",
     password: "dishwasher-funk"
-  }
+  },
+  "IyHk34": { 
+    id: "IyHk34",
+    email: "superman@gmail.com",
+    password: "iAmNotClarkKent" }
 };
 
 //FUNCTION TO FIND USER BY EMAIL
@@ -56,7 +60,10 @@ app.get('/', (request,response) => {
 
 //REGISTER PAGE
 app.get('/register', (request, response) => {
-  const templateVars = {urls: urlDatabase, users: users, userid: request.cookies['userid']};
+  const templateVars = {
+    urls: urlDatabase,
+    users: users,
+    userid: request.cookies['userid']};
   response.render('urls_register', templateVars);
 });
 
@@ -74,12 +81,20 @@ app.post('/register', (request, response) => {
 });
 
 //LOGIN PAGE
-app.post("/login", (request, response) => {
-  response.cookie('userid', request.body.userid);
-  response.redirect('/urls/');
+app.get('/login', (request, response) => {
+  const templateVars = {
+    urls: urlDatabase,
+    users: users,
+    userid: request.cookies['userid']};
+  response.render('urls_login', templateVars);
 });
 
-//LOGOUT PAGE
+//LOGIN BUTTON REDIRECT
+app.post("/login", (request, response) => {
+  response.redirect('urls_login');
+});
+
+//LOGOUT BUTTON RE-DIRECT
 app.post("/logout", (request, response) => {
   response.clearCookie('userid');
   response.redirect("/urls");
