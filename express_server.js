@@ -18,15 +18,47 @@ const generateRandomString = function() {
   return randomString;
 };
 
-//DATABASE
+//DATABASE OF URLS
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
+//DATABASE OF USERS
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dishwashers"
+  },
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+};
+
 //REDIRECT TRAFFIC FROM / TO /URLS HOMEPAGE
 app.get('/', (request,response) => {
   response.redirect('/urls/');
+});
+
+//REGISTER PAGE
+app.get('/register', (request, response) => {
+  const templateVars = {urls: urlDatabase, users: users, userid: request.cookies['userid']};
+  response.render('urls_register', templateVars);
+});
+
+//POST REGISTER
+app.post('/register', (request, response) => {
+  const newUser = {
+    id: generateRandomString(),
+    email: request.body.email,
+    password: request.body.password
+  };
+  users[newUser.id] = newUser;
+  response.cookie('userid', newUser.id);
+  response.redirect('/urls');
 });
 
 //LOGIN PAGE
@@ -45,7 +77,8 @@ app.post("/logout", (request, response) => {
 app.get('/urls', (request, response) => {
   const templateVars = {
     urls: urlDatabase,
-    username: request.cookies["username"]
+    users: users,
+    userid: request.cookies['userid']
   };
   response.render('urls_index', templateVars);
 });
@@ -53,7 +86,8 @@ app.get('/urls', (request, response) => {
 //INPUT NEW URLS TO BE SHORTENED
 app.get('/urls/new', (request, response) => {
   const templateVars = {
-    username: request.cookies["username"]
+    users: users,
+    userid: request.cookies['userid']
   };
   response.render('urls_new', templateVars);
 });
@@ -63,7 +97,8 @@ app.get('/urls/:shortURL', (request, response) => {
   const templateVars = {
     shortURL: request.params.shortURL,
     longURL: urlDatabase[request.params.shortURL],
-    username: request.cookies["username"]
+    users: users,
+    userid: request.cookies['userid']
   };
   response.render('urls_show', templateVars);
 });

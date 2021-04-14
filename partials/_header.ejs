@@ -11,31 +11,21 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <form class="form-inline" method="POST" action="/register" style="padding-top: 15px; padding-right: 15px">
-      <div class="input-group mb-3">
-        <button type="submit" class="btn btn-outline-light btn-lg" type="button">Register</button>
-      </div>
-    </form>
-
-
-
-    <!-- <% if(username) { %>
-      <h5 class="card-title" style="padding-right: 10px; color: rgb(226, 226, 226)">Logged In As: <%= username %>
-      </h5>
-      <form class="form-inline" method="POST" action="/logout">
-        <div class="input-group mb-3">
+    <% if(userid) { %>
+      <h6 class="card-title" style="padding-right: 15px; padding-top: 12px; color: rgba(226, 226, 226, 0.445)">Logged In
+        As: <%= users[userid].email %>
+      </h6>
+      <form class="form-inline" method="POST" action="/logout" style="padding-top: 15px; padding-right: 15px">
+        <div class=" input-group mb-3">
           <button type="submit" class="btn btn-outline-light" type="button">Logout</button>
         </div>
       </form>
       <% } else { %>
-        <form class="form-inline" method="POST" action="/login" style="padding-top: 15px; padding-right: 15px">
+        <form class="form-inline" method="GET" action="/register" style="padding-top: 15px; padding-right: 15px">
           <div class="input-group mb-3">
-            <input type="text" class="form-control" name="username" placeholder="username" aria-label="username"
-              aria-describedby="basic-addon2">
-            <div class="input-group-append">
-              <button type="submit" class="btn btn-info" type="button">Login</button>
-            </div>
+            <button type="submit" class="btn btn-outline-light" type="button">Register</button>
+          </div>
         </form>
-        <% } %> -->
+        <% } %>
   </nav>
 </header>
