@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const { request } = require('express');
 const app = express();
 const PORT = 8080;
 
@@ -51,7 +52,7 @@ const users = {
 //////////
 
 //GEENRATE RANDOM STRING OF 6 CHARACTERS FOR THE SHORT URL
-const generateRandomString = function() {
+const generateRandomString = () => {
   let char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let randomString = '';
   for (let i = 0; i < 6; i++) {
@@ -70,6 +71,20 @@ const findUserByEmail = (email) => {
   return null;
 };
 
+//RETURNS URLS WHERE THE USERID IS EQUAL TO ID OF CURRENT USER
+const urlsForUser = (id) => {
+  const urlsByUser = {};
+
+  for (const urls in urlDatabase) {
+    if (urlDatabase[urls].userID === id) {
+      urlsByUser[urls] = urlDatabase[urls];
+    }
+  }
+  return urlsByUser;
+};
+
+console.log(urlsForUser('BatS9b'));
+
 //////////
 // FUNCTIONS END
 //////////
@@ -78,13 +93,37 @@ const findUserByEmail = (email) => {
 // ROUTES SECTION
 //////////
 
-//REDIRECT TRAFFIC FROM / TO /URLS HOMEPAGE
+//HOMEPAGE
 app.get('/', (request,response) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
     userid: request.cookies['userid']};
   response.render('urls_home', templateVars);
+});
+
+//ACCOUNT PAGE ASKING TO EITHER REGISTER OR SIGN-IN
+app.get('/account', (request,response) => {
+  const templateVars = {
+    urls: urlDatabase,
+    users: users,
+    userid: request.cookies['userid']};
+  response.render('urls_account', templateVars);
+});
+
+//MYURLS PAGE
+app.get('/urls', (request, response) => {
+  //if they are not signed, redirect to the account page
+  if (!request.cookies.userid) {
+    response.redirect('/account');
+    return;
+  }
+  const templateVars = {
+    urls: urlDatabase,
+    users: users,
+    userid: request.cookies['userid']
+  };
+  response.render('urls_index', templateVars);
 });
 
 //REGISTER PAGE
@@ -162,18 +201,14 @@ app.post("/logout", (request, response) => {
   response.redirect("/urls");
 });
 
-//HOMEPAGE
-app.get('/urls', (request, response) => {
-  const templateVars = {
-    urls: urlDatabase,
-    users: users,
-    userid: request.cookies['userid']
-  };
-  response.render('urls_index', templateVars);
-});
-
 //INPUT NEW URLS TO BE SHORTENED
 app.get('/urls/new', (request, response) => {
+  //if they are not signed, redirect to the account page
+  if (!request.cookies.userid) {
+    response.redirect('/account');
+    return;
+  }
+
   const templateVars = {
     users: users,
     userid: request.cookies['userid']

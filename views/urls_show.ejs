@@ -12,15 +12,17 @@
   <header>
     <%- include('../partials/_header') %>
   </header>
-  <div class="card text-center">
-    <div class="card-header"></div>
-    <div class="card-body">
-      <h5 class="card-title">TinyURL for: <%= longURL %>
-      </h5>
-      <p class="card-text">Short URL: <a href="/u/<%= shortURL %>">
-          <%= shortURL %>
-        </a></p>
-    </div>
+  <h3 class="text-center" class="navbar navbar-expand-md navbar-dark bg-info text-center"
+    style="background-color: hsl(188, 81%, 47%); color: rgb(255, 255, 255); padding: 10px; margin: 0;">TinyURL for: <%=
+      longURL %>
+  </h3>
+  <h5 class="text-center" class="navbar navbar-expand-md navbar-dark bg-info text-center"
+    style="background-color: hsl(188, 86%, 51%); color: rgb(255, 255, 255); padding: 10px;">Short URL: <a
+      href="/u/<%= shortURL %>">
+      <%= shortURL %>
+    </a></p>
+  </h5>
+  </div>
   </div>
   <div class="card-footer text-muted">
     <div class="card text-center">
