@@ -20,26 +20,27 @@ const generateRandomString = function() {
 
 //DATABASE OF URLS
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
-  "d92lH4": "http://www.youtube.com",
-  "R012jS": "http://www.espn.com",
-  "4bLFBN":	"http://www.facebook.com"
+  "b2xVn2": {longURL: "http://www.lighthouselabs.ca", userID: "Irod0U" },
+  "9sm5xK": {longURL: "http://www.google.com",        userID: "BatS9b" },
+  "He8Kv2":	{longURL: "http://www.superman.com",      userID: "Supk34" },
+  "d92lH4": {longURL: "http://www.youtube.com",       userID: "Irod0U" },
+  "R012jS": {longURL: "http://www.espn.com",          userID: "BatS9b" },
+  "4bLFBN":	{longURL: "http://www.facebook.com",      userID: "Supk34" }
 };
 
 //DATABASE OF USERS
 const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dishwashers"
+  "Irod0U": {
+    id: "L3kd0U",
+    email: "ironman@gmail.com",
+    password: "tonyStark"
   },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
+  "BatS9b": {
+    id: "do3S9b",
+    email: "batman@gmail.com",
+    password: "iHeartRobin"
   },
-  "IyHk34": { 
+  "Supk34": { 
     id: "IyHk34",
     email: "superman@gmail.com",
     password: "iAmNotClarkKent" }
@@ -47,9 +48,9 @@ const users = {
 
 //FUNCTION TO FIND USER BY EMAIL
 const findUserByEmail = (email) => {
-  for (const userId in users) {
-    const user = users[userId];
-    if (user.email === email) {
+  for (const userID in users) {
+    const user = users[userID];
+    if (users.email === email) {
       return user;
     }
   }
@@ -163,7 +164,7 @@ app.get('/urls/new', (request, response) => {
 app.get('/urls/:shortURL', (request, response) => {
   const templateVars = {
     shortURL: request.params.shortURL,
-    longURL: urlDatabase[request.params.shortURL],
+    longURL: urlDatabase[request.params.shortURL].longURL,
     users: users,
     userid: request.cookies['userid']
   };
@@ -173,14 +174,16 @@ app.get('/urls/:shortURL', (request, response) => {
 //TINYURL GENERATOR TO CREATE SHORT URL
 app.post('/urls', (request, response) => {
   const shortUrl = generateRandomString();
-  urlDatabase[shortUrl] = request.body.longURL;
-  const templateVars = {shortURL: shortUrl, longURL: urlDatabase[shortUrl]};
+  const templateVars = {
+    shortURL: request.params.shortURL,
+    longURL: urlDatabase[request.params.shortURL].longURL
+  };
   response.render('urls_show', templateVars);
 });
 
 //REDIRECT FROM TINYAPP TO ACTUAL WEBSITE VIA SHORTURL
 app.get('/u/:shortURL', (request, response) => {
-  const longURL = urlDatabase[request.params.shortURL];
+  const longURL = urlDatabase[request.params.shortURL].longURL;
   response.redirect(longURL);
 });
 
@@ -194,7 +197,7 @@ app.post('/urls/:shortURL/delete', (request, response) => {
 
 //EDIT/UPDATE SHORT URLS WITH A NEW LONG URL
 app.post('/urls/:shortURL/edit', (request, response) => {
-  urlDatabase[request.params.shortURL] = request.body.longURL;
+  urlDatabase[request.params.shortURL].longURL = request.body.longURL;
   response.redirect(`/urls/`);
 });
 
