@@ -8,15 +8,6 @@ app.set('view engine', 'ejs');
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
 
-//GEENRATE RANDOM STRING OF 6 CHARACTERS FOR THE SHORT URL
-const generateRandomString = function() {
-  let char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let randomString = '';
-  for (let i = 0; i < 6; i++) {
-    randomString += char.charAt(Math.floor(Math.random() * char.length));
-  }
-  return randomString;
-};
 
 //DATABASE OF URLS
 const urlDatabase = {
@@ -27,6 +18,10 @@ const urlDatabase = {
   "R012jS": {longURL: "http://www.espn.com",          userID: "BatS9b" },
   "4bLFBN":	{longURL: "http://www.facebook.com",      userID: "Supk34" }
 };
+
+//////////
+// DATABASE SECTION
+//////////
 
 //DATABASE OF USERS
 const users = {
@@ -46,6 +41,24 @@ const users = {
     password: "iAmNotClarkKent" }
 };
 
+//////////
+// DATABASE END
+//////////
+
+//////////
+// FUNCTIONS SECTION
+//////////
+
+//GEENRATE RANDOM STRING OF 6 CHARACTERS FOR THE SHORT URL
+const generateRandomString = function() {
+  let char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let randomString = '';
+  for (let i = 0; i < 6; i++) {
+    randomString += char.charAt(Math.floor(Math.random() * char.length));
+  }
+  return randomString;
+};
+
 //FUNCTION TO FIND USER BY EMAIL
 const findUserByEmail = (email) => {
   for (const userID in users) {
@@ -56,6 +69,14 @@ const findUserByEmail = (email) => {
   }
   return null;
 };
+
+//////////
+// FUNCTIONS END
+//////////
+
+//////////
+// ROUTES SECTION
+//////////
 
 //REDIRECT TRAFFIC FROM / TO /URLS HOMEPAGE
 app.get('/', (request,response) => {
@@ -200,6 +221,10 @@ app.post('/urls/:shortURL/edit', (request, response) => {
   urlDatabase[request.params.shortURL].longURL = request.body.longURL;
   response.redirect(`/urls/`);
 });
+
+//////////
+// ROUTES END
+//////////
 
 //LISTEN FOR PORT CHOSEN AT TOP OF FILE
 app.listen(PORT, () => {
