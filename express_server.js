@@ -21,7 +21,10 @@ const generateRandomString = function() {
 //DATABASE OF URLS
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
+  "d92lH4": "http://www.youtube.com",
+  "R012jS": "http://www.espn.com",
+  "4bLFBN":	"http://www.facebook.com"
 };
 
 //DATABASE OF USERS
@@ -55,7 +58,11 @@ const findUserByEmail = (email) => {
 
 //REDIRECT TRAFFIC FROM / TO /URLS HOMEPAGE
 app.get('/', (request,response) => {
-  response.redirect('/urls/');
+  const templateVars = {
+    urls: urlDatabase,
+    users: users,
+    userid: request.cookies['userid']};
+  response.render('urls_home', templateVars);
 });
 
 //REGISTER PAGE

@@ -1,6 +1,6 @@
 <header>
   <nav class="navbar navbar-expand-md navbar-dark bg-info">
-    <a class="navbar-brand" href="/urls">TinyApp</a>
+    <a class="navbar-brand" href="/">TinyApp</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
       aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -11,8 +11,8 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if(userid) { %>
-      <h6 class="card-title" style="padding-right: 15px; padding-top: 12px; color: rgba(226, 226, 226, 0.445)">Logged In
+    <% if (userid) { %>
+      <h6 class="card-title" style="padding-right: 15px; padding-top: 12px; color: rgba(226, 226, 226, 0.445)">Logged in
         as: <%= users[userid].email %>
       </h6>
       <form class="form-inline" method="POST" action="/logout" style="padding-top: 15px; padding-right: 15px">
