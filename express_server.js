@@ -9,6 +9,11 @@ app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
 
 
+
+//////////
+// DATABASE SECTION
+//////////
+
 //DATABASE OF URLS
 const urlDatabase = {
   "b2xVn2": {longURL: "http://www.lighthouselabs.ca", userID: "Irod0U" },
@@ -18,10 +23,6 @@ const urlDatabase = {
   "R012jS": {longURL: "http://www.espn.com",          userID: "BatS9b" },
   "4bLFBN":	{longURL: "http://www.facebook.com",      userID: "Supk34" }
 };
-
-//////////
-// DATABASE SECTION
-//////////
 
 //DATABASE OF USERS
 const users = {
