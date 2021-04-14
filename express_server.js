@@ -26,17 +26,17 @@ const urlDatabase = {
 //DATABASE OF USERS
 const users = {
   "Irod0U": {
-    id: "L3kd0U",
+    id: "Irod0U",
     email: "ironman@gmail.com",
     password: "tonyStark"
   },
   "BatS9b": {
-    id: "do3S9b",
+    id: "BatS9b",
     email: "batman@gmail.com",
     password: "iHeartRobin"
   },
-  "Supk34": { 
-    id: "IyHk34",
+  "Supk34": {
+    id: "Supk34",
     email: "superman@gmail.com",
     password: "iAmNotClarkKent" }
 };
@@ -62,9 +62,8 @@ const generateRandomString = function() {
 //FUNCTION TO FIND USER BY EMAIL
 const findUserByEmail = (email) => {
   for (const userID in users) {
-    const user = users[userID];
-    if (users.email === email) {
-      return user;
+    if (users[userID].email === email) {
+      return users[userID];
     }
   }
   return null;
@@ -102,13 +101,13 @@ app.post('/register', (request, response) => {
     email,
     password} = request.body;
   if (!email || !password) {
-    return response.sendStatus(400);
+    return response.status(400).send('Bad Request: The email and/or password field is blank.');
   }
 
   const userExists = findUserByEmail(email);
 
   if (userExists) {
-    return response.sendStatus(400);
+    return response.status(400).send('Bad Request: This account already exists, please use the login page.');
   }
   
   const newUser = {
@@ -119,7 +118,6 @@ app.post('/register', (request, response) => {
   users[newUser.id] = newUser;
   response.cookie('userid', newUser.id);
   response.redirect('/urls');
-  console.log('WHO IS MY NEW USER', newUser);
 });
 
 //LOGIN PAGE
@@ -127,7 +125,8 @@ app.get('/login', (request, response) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
-    userid: request.cookies['userid']};
+    userid: request.cookies['userid']
+  };
   response.render('urls_login', templateVars);
 });
 
@@ -137,22 +136,22 @@ app.post("/login", (request, response) => {
   const password = request.body.password;
   //IF THE FIELDS ARE LEFT BLANK
   if (!email || !password) {
-    return response.sendStatus(400);
+    return response.status(400).send('Bad Request: The email and/or password field is blank.');
   }
 
   const userExists = findUserByEmail(email);
 
   //IF WE CAN'D FIND A USER WITH THAT EMAIL
   if (userExists === null) {
-    return response.sendStatus(403);
+    return response.status(403).send('Forbidden: This account does not exist.');
   }
 
   //IF WE FIND A USER THAT MATCHES THEN WE CHECK THE PASSWORDS
   if (userExists.password !== password) {
-    return response.sendStatus(403);
+    return response.status(403).send('Forbidden: The password you entered is incorrect.');
   }
-  response.cookie('userid', userExists.id);
 
+  response.cookie('userid', userExists.id);
   response.redirect('/urls');
 });
 
