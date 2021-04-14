@@ -38,6 +38,7 @@ const users = {
   }
 };
 
+//FUNCTION TO FIND USER BY EMAIL
 const findUserByEmail = (email) => {
   for (const userId in users) {
     const user = users[userId];
@@ -60,7 +61,7 @@ app.get('/register', (request, response) => {
 });
 
 //POST REGISTER
-app.post('/register', (request, response) => {  
+app.post('/register', (request, response) => {
   const newUser = {
     id: generateRandomString(),
     email: request.body.email,
