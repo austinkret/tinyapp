@@ -69,6 +69,18 @@ app.get('/register', (request, response) => {
 
 //POST REGISTER
 app.post('/register', (request, response) => {
+  const { email, password} = request.body;
+  console.log("Did they put in this stuff?", email, password);
+  if (!email || !password) {
+    return response.send('You didn\'t enter and email or password, please enter your information to register!');
+  }
+
+  const userExists = findUserByEmail(email);
+
+  if (userExists) {
+    return response.status(400).send('Sorry, an account has already been created with that email address. If it was you, please go to the login page; otherwise please use a different email address.');
+  }
+  
   const newUser = {
     id: generateRandomString(),
     email: request.body.email,
