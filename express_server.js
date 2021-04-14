@@ -38,6 +38,16 @@ const users = {
   }
 };
 
+const findUserByEmail = (email) => {
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+};
+
 //REDIRECT TRAFFIC FROM / TO /URLS HOMEPAGE
 app.get('/', (request,response) => {
   response.redirect('/urls/');
@@ -50,7 +60,7 @@ app.get('/register', (request, response) => {
 });
 
 //POST REGISTER
-app.post('/register', (request, response) => {
+app.post('/register', (request, response) => {  
   const newUser = {
     id: generateRandomString(),
     email: request.body.email,
@@ -63,13 +73,13 @@ app.post('/register', (request, response) => {
 
 //LOGIN PAGE
 app.post("/login", (request, response) => {
-  response.cookie('username', request.body.username);
+  response.cookie('userid', request.body.userid);
   response.redirect('/urls/');
 });
 
 //LOGOUT PAGE
 app.post("/logout", (request, response) => {
-  response.clearCookie('username');
+  response.clearCookie('userid');
   response.redirect("/urls");
 });
 
