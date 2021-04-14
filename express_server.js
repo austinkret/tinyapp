@@ -69,16 +69,17 @@ app.get('/register', (request, response) => {
 
 //POST REGISTER
 app.post('/register', (request, response) => {
-  const { email, password} = request.body;
-  console.log("Did they put in this stuff?", email, password);
+  const {
+    email,
+    password} = request.body;
   if (!email || !password) {
-    return response.send('You didn\'t enter and email or password, please enter your information to register!');
+    return response.sendStatus(400);
   }
 
   const userExists = findUserByEmail(email);
 
   if (userExists) {
-    return response.status(400).send('Sorry, an account has already been created with that email address. If it was you, please go to the login page; otherwise please use a different email address.');
+    return response.sendStatus(400);
   }
   
   const newUser = {
@@ -103,7 +104,27 @@ app.get('/login', (request, response) => {
 
 //LOGIN BUTTON REDIRECT
 app.post("/login", (request, response) => {
-  response.redirect('urls_login');
+  const email = request.body.email;
+  const password = request.body.password;
+  //IF THE FIELDS ARE LEFT BLANK
+  if (!email || !password) {
+    return response.sendStatus(400);
+  }
+
+  const userExists = findUserByEmail(email);
+
+  //IF WE CAN'D FIND A USER WITH THAT EMAIL
+  if (userExists === null) {
+    return response.sendStatus(403);
+  }
+
+  //IF WE FIND A USER THAT MATCHES THEN WE CHECK THE PASSWORDS
+  if (userExists.password !== password) {
+    return response.sendStatus(403);
+  }
+  response.cookie('userid', userExists.id);
+
+  response.redirect('/urls');
 });
 
 //LOGOUT BUTTON RE-DIRECT
