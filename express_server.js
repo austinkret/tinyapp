@@ -69,6 +69,7 @@ app.post('/register', (request, response) => {
   users[newUser.id] = newUser;
   response.cookie('userid', newUser.id);
   response.redirect('/urls');
+  console.log('WHO IS MY NEW USER', newUser);
 });
 
 //LOGIN PAGE
