@@ -1,7 +1,7 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const { findUserByEmail, generateRandomString, urlsForUser } = require('./helper');
+const { findUserByEmail, generateRandomString } = require('./helper');
 const app = express();
 const PORT = 8080;
 
@@ -54,6 +54,26 @@ const users = {
 
 //////////
 // DATABASE END
+//////////
+
+//////////
+// FUNCTIONS SECTION
+//////////
+
+//RETURNS URLS WHERE THE USERID IS EQUAL TO ID OF CURRENT USER
+const urlsForUser = (id) => {
+  const urlsByUser = {};
+
+  for (const urls in urlDatabase) {
+    if (urlDatabase[urls].userID === id) {
+      urlsByUser[urls] = urlDatabase[urls];
+    }
+  }
+  return urlsByUser;
+};
+
+//////////
+// FUNCTIONS END
 //////////
 
 //////////

@@ -7,7 +7,7 @@ const findUserByEmail = (email, users) => {
   }
 };
 
-//GEENRATE RANDOM STRING OF 6 CHARACTERS FOR THE SHORT URL
+//GENERATE RANDOM STRING OF 6 CHARACTERS FOR THE SHORT URL
 const generateRandomString = () => {
   let char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let randomString = '';
@@ -17,20 +17,7 @@ const generateRandomString = () => {
   return randomString;
 };
 
-//RETURNS URLS WHERE THE USERID IS EQUAL TO ID OF CURRENT USER
-const urlsForUser = (id) => {
-  const urlsByUser = {};
-
-  for (const urls in urlDatabase) {
-    if (urlDatabase[urls].userID === id) {
-      urlsByUser[urls] = urlDatabase[urls];
-    }
-  }
-  return urlsByUser;
-};
-
 module.exports = {
   findUserByEmail,
-  generateRandomString,
-  urlsForUser
+  generateRandomString
 };
