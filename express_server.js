@@ -1,5 +1,4 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const app = express();
@@ -7,7 +6,10 @@ const PORT = 8080;
 
 //ENGINES AND MIDDLEWARE
 app.set('view engine', 'ejs');
-app.use(cookieParser());
+app.use(cookieSession({
+  name:'session',
+  keys: ['myKeys', 'myKeys2'],
+}));
 app.use(express.urlencoded({extended: true}));
 
 //////////
@@ -101,7 +103,7 @@ app.get('/', (request,response) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
-    userid: request.cookies['userid']};
+    userid: request.session.userid};
   response.render('urls_home', templateVars);
 });
 
@@ -110,7 +112,7 @@ app.get('/account', (request,response) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
-    userid: request.cookies['userid']};
+    userid: request.session.userid};
   response.render('urls_account', templateVars);
 });
 
@@ -119,7 +121,7 @@ app.get('/register', (request, response) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
-    userid: request.cookies['userid']};
+    userid: request.session.userid};
   response.render('urls_register', templateVars);
 });
 
@@ -144,7 +146,7 @@ app.post('/register', (request, response) => {
   };
   console.log(newUser);
   users[newUser.id] = newUser;
-  response.cookie('userid', newUser.id);
+  request.session.userid = newUser.id;
   response.redirect('/urls');
 });
 
@@ -153,7 +155,7 @@ app.get('/login', (request, response) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
-    userid: request.cookies['userid']
+    userid: request.session.userid
   };
   response.render('urls_login', templateVars);
 });
@@ -176,21 +178,22 @@ app.post("/login", (request, response) => {
   if (bcrypt.compareSync(passwordHash, userExists.password)) {
     return response.status(403).send('Forbidden: The password you entered is incorrect.');
   }
-  response.cookie('userid', userExists.id);
+  // response.cookie('userid', userExists.id);
+  request.session.userid = userExists.id;
   response.redirect('/urls');
 });
 
 //MYURLS PAGE
 app.get('/urls', (request, response) => {
   //if they are not signed, redirect to the account page
-  if (!request.cookies.userid) {
+  if (!request.session.userid) {
     response.redirect('/account');
     return;
   }
   const templateVars = {
     urls: urlDatabase,
     users: users,
-    userid: request.cookies['userid']
+    userid: request.session.userid
   };
   response.render('urls_index', templateVars);
 });
@@ -200,35 +203,35 @@ app.post('/urls', (request, response) => {
   const shortUrl = generateRandomString();
   urlDatabase[shortUrl] = {};
   urlDatabase[shortUrl].longURL = request.body.longURL;
-  urlDatabase[shortUrl].userID = request.cookies.userid;
+  urlDatabase[shortUrl].userID = request.session.userid;
   
   response.redirect(`/urls`);
 });
 
 //LOGOUT BUTTON RE-DIRECT
 app.post("/logout", (request, response) => {
-  response.clearCookie('userid');
+  request.session = null;
   response.redirect("/urls");
 });
 
 //INPUT NEW URLS TO BE SHORTENED
 app.get('/urls/new', (request, response) => {
   //if they are not signed, redirect to the account page
-  if (!request.cookies.userid) {
+  if (!request.session.userid) {
     response.redirect('/account');
     return;
   }
 
   const templateVars = {
     users: users,
-    userid: request.cookies['userid']
+    userid: request.session.userid
   };
   response.render('urls_new', templateVars);
 });
 
 //PAGE FOR EDITING SHORTURLS
 app.get('/urls/:shortURL', (request, response) => {
-  const userUrls = urlsForUser(request.cookies.userid);
+  const userUrls = urlsForUser(request.session.userid);
   const shortURL = request.params.shortURL;
   
   if (shortURL in userUrls) {
@@ -236,7 +239,7 @@ app.get('/urls/:shortURL', (request, response) => {
       shortURL: request.params.shortURL,
       longURL: urlDatabase[request.params.shortURL].longURL,
       users: users,
-      userid: request.cookies['userid']
+      userid: request.session.userid
     };
     response.render('urls_show', templateVars);
     return;
@@ -259,7 +262,7 @@ app.get('/u/:shortURL', (request, response) => {
 
 //GET DELETE URL
 app.get('/urls/:shortURL/delete', (request, response) => {
-  const userUrls = urlsForUser(request.cookies.userid);
+  const userUrls = urlsForUser(request.session.userid);
   const shortUrl = request.params.shortURL;
 
   if (shortUrl in userUrls) {
@@ -273,7 +276,7 @@ app.get('/urls/:shortURL/delete', (request, response) => {
 
 //POST DELETE URL FORM THE DATABASE
 app.post('/urls/:shortURL/delete', (request, response) => {
-  const userUrls = urlsForUser(request.cookies.userid);
+  const userUrls = urlsForUser(request.session.userid);
   const shortUrl = request.params.shortURL;
 
   if (shortUrl in userUrls) {
