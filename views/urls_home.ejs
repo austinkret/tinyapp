@@ -15,31 +15,51 @@
   <header>
     <%- include('./partials/_header') %>
   </header>
-  <main style="margin: 1em;">
-    <div class="jumbotron">
-      <h1 class="display-4">Hello, there!</h1>
-      <p class="lead">This is a website called TinyApp. We love to make things smaller for you! Looking for fit a
-        character limit in your favourite social media application? Throw your URL into our engine and BAM! We'll give
-        you back a unique six digit link that you can use from now until eternity!</p>
-      <hr class="my-4">
-      <p>To store the tiny links that you make here in TinyApp, just register for an account and we'll keep them safe
-        for the next time
-        you visit!</p>
-      <p class="lead">
-        <a class="btn btn-info btn-lg" href="/register" role="button">Register Now!</a>
-      </p>
-    </div>
-  </main>
-  <!-- Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-    crossorigin="anonymous"></script>
+  <% if (userid) { %>
+    <main style="margin: 1em;">
+      <div class="jumbotron">
+        <h1 class="display-4">Welcome back, <%= users[userid].email %>!</h1>
+        <p class="lead">Welcome back! You know the drill... Throw your URL into our engine and BAM! We'll give
+          you back a unique six digit link that you can use from now until eternity!</p>
+        <hr class="my-4">
+        <p>We've got all the URLs you've made previously saved to saved to your account, check them out at My
+          URLs, or go ahead
+          and create some new ones!</p>
+        <p class="lead">
+          <a class="btn btn-info btn-lg" href="/urls/new" role="button">Create New URL</a>
+          <a class="btn btn-info btn-lg" href="/urls" role="button">My URLs</a>
+        </p>
+      </div>
+    </main>
+    <% } else { %>
+      <main style="margin: 1em;">
+        <div class="jumbotron">
+          <h1 class="display-4">Hello, there!</h1>
+          <p class="lead">We haven't met yet, so let me me introduce myself! This is a website called TinyApp. We love
+            to make things smaller for you! Looking to fit a
+            character limit in your favourite social media application? Throw your URL into our engine and BAM! We'll
+            give
+            you back a unique six digit link that you can use from now until eternity!</p>
+          <hr class="my-4">
+          <p>To get started, register now! Or maybe we just forgot that you've visited us before and already have an
+            account, in that case, just login again!</p>
+          <p class="lead">
+            <a class="btn btn-info btn-lg" href="/register" role="button">Register Now!</a>
+            <a class="btn btn-info btn-lg" href="/login" role="button">Log me in!</a>
+          </p>
+        </div>
+      </main>
+      <% } %>
+        <!-- Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+          integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+          crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+          integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+          crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+          integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+          crossorigin="anonymous"></script>
 </body>
 
 </html>
