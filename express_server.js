@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const { findUserByEmail } = require('./helper');
 const app = express();
 const PORT = 8080;
 
@@ -23,7 +24,8 @@ const urlDatabase = {
   "He8Kv2":	{longURL: "http://www.superman.com",      userID: "Supk34" },
   "d92lH4": {longURL: "http://www.youtube.com",       userID: "Irod0U" },
   "R012jS": {longURL: "http://www.espn.com",          userID: "BatS9b" },
-  "4bLFBN":	{longURL: "http://www.facebook.com",      userID: "Supk34" }
+  "4bLFBN":	{longURL: "http://www.facebook.com",      userID: "Supk34" },
+  "d8E3mS": {longURL: "http://www.twitter.com",       userID: "asIPk0" }
 };
 
 //DATABASE OF USERS
@@ -66,16 +68,6 @@ const generateRandomString = () => {
     randomString += char.charAt(Math.floor(Math.random() * char.length));
   }
   return randomString;
-};
-
-//FUNCTION TO FIND USER BY EMAIL
-const findUserByEmail = (email) => {
-  for (const userID in users) {
-    if (users[userID].email === email) {
-      return users[userID];
-    }
-  }
-  return null;
 };
 
 //RETURNS URLS WHERE THE USERID IS EQUAL TO ID OF CURRENT USER
@@ -129,7 +121,7 @@ app.get('/register', (request, response) => {
 app.post('/register', (request, response) => {
   const email = request.body.email;
   const password = request.body.password;
-  const userExists = findUserByEmail(email);
+  const userExists = findUserByEmail(email, users);
 
   if (!email || !password) {
     return response.status(400).send('Bad Request: The email and/or password field is blank.');
@@ -165,7 +157,7 @@ app.post("/login", (request, response) => {
   const email = request.body.email;
   const passwordHash = bcrypt.hashSync(request.body.password, 10);
 
-  const userExists = findUserByEmail(email);
+  const userExists = findUserByEmail(email, users);
 
   if (!email || !passwordHash) {
     return response.status(400).send('Bad Request: The email and/or password field is blank.');
@@ -178,7 +170,7 @@ app.post("/login", (request, response) => {
   if (bcrypt.compareSync(passwordHash, userExists.password)) {
     return response.status(403).send('Forbidden: The password you entered is incorrect.');
   }
-  // response.cookie('userid', userExists.id);
+
   request.session.userid = userExists.id;
   response.redirect('/urls');
 });
@@ -206,12 +198,6 @@ app.post('/urls', (request, response) => {
   urlDatabase[shortUrl].userID = request.session.userid;
   
   response.redirect(`/urls`);
-});
-
-//LOGOUT BUTTON RE-DIRECT
-app.post("/logout", (request, response) => {
-  request.session = null;
-  response.redirect("/urls");
 });
 
 //INPUT NEW URLS TO BE SHORTENED
@@ -286,6 +272,12 @@ app.post('/urls/:shortURL/delete', (request, response) => {
   }
   response.send('Not Found: This link either does not exist, or you do not have authorization to delete it.');
   return;
+});
+
+//LOGOUT BUTTON RE-DIRECT
+app.post("/logout", (request, response) => {
+  request.session = null;
+  response.redirect("/urls");
 });
 
 //////////
