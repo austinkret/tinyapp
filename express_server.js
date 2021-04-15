@@ -1,15 +1,13 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const { request } = require('express');
+const bcrypt = require('bcrypt');
 const app = express();
 const PORT = 8080;
 
-//ENGINES AND USES OF MODULES
+//ENGINES AND MIDDLEWARE
 app.set('view engine', 'ejs');
 app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
-
-
 
 //////////
 // DATABASE SECTION
@@ -30,17 +28,23 @@ const users = {
   "Irod0U": {
     id: "Irod0U",
     email: "ironman@gmail.com",
-    password: "tonyStark"
+    password: "$2b$10$RV6cAM4NLBq9eZObDo.mneVmrd8TjRl8Iusmoam8kp2ZbcMsw40Ru"
   },
   "BatS9b": {
     id: "BatS9b",
     email: "batman@gmail.com",
-    password: "iHeartRobin"
+    password: "$2b$10$hPHWMkndBhQZwOZHDtK/feeMxUPnaKe8fhKA7pwFF3zvZyBsDrI5y"
   },
   "Supk34": {
     id: "Supk34",
     email: "superman@gmail.com",
-    password: "iAmNotClarkKent" }
+    password: '$2b$10$2Apw3n61k4WFtadZA8ZxYOtJ0rxU1FDzH2LYRs0KM38pq2C1v7NVG'
+  },
+  "asIPk0": {
+    id: "asIPk0",
+    email: "thor@gmail.com",
+    password: "$2b$10$x/sFo64rnGlCjCU1PLiw4.E1wr8t99QLOVHAGguuJVgepebnCvEn6"
+  }
 };
 
 //////////
@@ -109,6 +113,72 @@ app.get('/account', (request,response) => {
   response.render('urls_account', templateVars);
 });
 
+//REGISTER PAGE
+app.get('/register', (request, response) => {
+  const templateVars = {
+    urls: urlDatabase,
+    users: users,
+    userid: request.cookies['userid']};
+  response.render('urls_register', templateVars);
+});
+
+//POST REGISTER
+app.post('/register', (request, response) => {
+  const email = request.body.email;
+  const password = request.body.password;
+  const userExists = findUserByEmail(email);
+
+  if (!email || !password) {
+    return response.status(400).send('Bad Request: The email and/or password field is blank.');
+  }
+
+  if (userExists) {
+    return response.status(400).send('Bad Request: This account already exists, please use the login page.');
+  }
+  
+  const newUser = {
+    id: generateRandomString(),
+    email: request.body.email,
+    password: bcrypt.hashSync(password, 10)
+  };
+  console.log(newUser);
+  users[newUser.id] = newUser;
+  response.cookie('userid', newUser.id);
+  response.redirect('/urls');
+});
+
+//LOGIN PAGE
+app.get('/login', (request, response) => {
+  const templateVars = {
+    urls: urlDatabase,
+    users: users,
+    userid: request.cookies['userid']
+  };
+  response.render('urls_login', templateVars);
+});
+
+//LOGIN BUTTON REDIRECT
+app.post("/login", (request, response) => {
+  const email = request.body.email;
+  const passwordHash = bcrypt.hashSync(request.body.password, 10);
+
+  const userExists = findUserByEmail(email);
+
+  if (!email || !passwordHash) {
+    return response.status(400).send('Bad Request: The email and/or password field is blank.');
+  }
+
+  if (userExists === null) {
+    return response.status(403).send('Forbidden: This account does not exist.');
+  }
+
+  if (bcrypt.compareSync(passwordHash, userExists.password)) {
+    return response.status(403).send('Forbidden: The password you entered is incorrect.');
+  }
+  response.cookie('userid', userExists.id);
+  response.redirect('/urls');
+});
+
 //MYURLS PAGE
 app.get('/urls', (request, response) => {
   //if they are not signed, redirect to the account page
@@ -132,75 +202,6 @@ app.post('/urls', (request, response) => {
   urlDatabase[shortUrl].userID = request.cookies.userid;
   
   response.redirect(`/urls`);
-});
-
-//REGISTER PAGE
-app.get('/register', (request, response) => {
-  const templateVars = {
-    urls: urlDatabase,
-    users: users,
-    userid: request.cookies['userid']};
-  response.render('urls_register', templateVars);
-});
-
-//POST REGISTER
-app.post('/register', (request, response) => {
-  const {
-    email,
-    password} = request.body;
-  if (!email || !password) {
-    return response.status(400).send('Bad Request: The email and/or password field is blank.');
-  }
-
-  const userExists = findUserByEmail(email);
-
-  if (userExists) {
-    return response.status(400).send('Bad Request: This account already exists, please use the login page.');
-  }
-  
-  const newUser = {
-    id: generateRandomString(),
-    email: request.body.email,
-    password: request.body.password
-  };
-  users[newUser.id] = newUser;
-  response.cookie('userid', newUser.id);
-  response.redirect('/urls');
-});
-
-//LOGIN PAGE
-app.get('/login', (request, response) => {
-  const templateVars = {
-    urls: urlDatabase,
-    users: users,
-    userid: request.cookies['userid']
-  };
-  response.render('urls_login', templateVars);
-});
-
-//LOGIN BUTTON REDIRECT
-app.post("/login", (request, response) => {
-  const email = request.body.email;
-  const password = request.body.password;
-  //IF THE FIELDS ARE LEFT BLANK
-  if (!email || !password) {
-    return response.status(400).send('Bad Request: The email and/or password field is blank.');
-  }
-
-  const userExists = findUserByEmail(email);
-
-  //IF WE CAN'D FIND A USER WITH THAT EMAIL
-  if (userExists === null) {
-    return response.status(403).send('Forbidden: This account does not exist.');
-  }
-
-  //IF WE FIND A USER THAT MATCHES THEN WE CHECK THE PASSWORDS
-  if (userExists.password !== password) {
-    return response.status(403).send('Forbidden: The password you entered is incorrect.');
-  }
-
-  response.cookie('userid', userExists.id);
-  response.redirect('/urls');
 });
 
 //LOGOUT BUTTON RE-DIRECT
