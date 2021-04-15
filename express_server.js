@@ -1,7 +1,7 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const { findUserByEmail } = require('./helper');
+const { findUserByEmail, generateRandomString, urlsForUser } = require('./helper');
 const app = express();
 const PORT = 8080;
 
@@ -9,7 +9,7 @@ const PORT = 8080;
 app.set('view engine', 'ejs');
 app.use(cookieSession({
   name:'session',
-  keys: ['myKeys', 'myKeys2'],
+  keys: ['myKeys'],
 }));
 app.use(express.urlencoded({extended: true}));
 
@@ -54,36 +54,6 @@ const users = {
 
 //////////
 // DATABASE END
-//////////
-
-//////////
-// FUNCTIONS SECTION
-//////////
-
-//GEENRATE RANDOM STRING OF 6 CHARACTERS FOR THE SHORT URL
-const generateRandomString = () => {
-  let char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let randomString = '';
-  for (let i = 0; i < 6; i++) {
-    randomString += char.charAt(Math.floor(Math.random() * char.length));
-  }
-  return randomString;
-};
-
-//RETURNS URLS WHERE THE USERID IS EQUAL TO ID OF CURRENT USER
-const urlsForUser = (id) => {
-  const urlsByUser = {};
-
-  for (const urls in urlDatabase) {
-    if (urlDatabase[urls].userID === id) {
-      urlsByUser[urls] = urlDatabase[urls];
-    }
-  }
-  return urlsByUser;
-};
-
-//////////
-// FUNCTIONS END
 //////////
 
 //////////
@@ -155,11 +125,11 @@ app.get('/login', (request, response) => {
 //LOGIN BUTTON REDIRECT
 app.post("/login", (request, response) => {
   const email = request.body.email;
-  const passwordHash = bcrypt.hashSync(request.body.password, 10);
+  const password = request.body.password;
 
   const userExists = findUserByEmail(email, users);
 
-  if (!email || !passwordHash) {
+  if (!email || !password) {
     return response.status(400).send('Bad Request: The email and/or password field is blank.');
   }
 
@@ -167,7 +137,7 @@ app.post("/login", (request, response) => {
     return response.status(403).send('Forbidden: This account does not exist.');
   }
 
-  if (bcrypt.compareSync(passwordHash, userExists.password)) {
+  if (!bcrypt.compareSync(password, userExists.password)) {
     return response.status(403).send('Forbidden: The password you entered is incorrect.');
   }
 
