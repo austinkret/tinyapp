@@ -124,6 +124,16 @@ app.get('/urls', (request, response) => {
   response.render('urls_index', templateVars);
 });
 
+//TINYURL GENERATOR TO CREATE SHORT URL
+app.post('/urls', (request, response) => {
+  const shortUrl = generateRandomString();
+  urlDatabase[shortUrl] = {};
+  urlDatabase[shortUrl].longURL = request.body.longURL;
+  urlDatabase[shortUrl].userID = request.cookies.userid;
+  
+  response.redirect(`/urls`);
+});
+
 //REGISTER PAGE
 app.get('/register', (request, response) => {
   const templateVars = {
@@ -237,16 +247,6 @@ app.get('/urls/:shortURL', (request, response) => {
 app.post('/urls/:shortURL/edit', (request, response) => {
   urlDatabase[request.params.shortURL].longURL = request.body.longURL;
   response.redirect(`/urls/`);
-});
-
-//TINYURL GENERATOR TO CREATE SHORT URL
-app.post('/urls', (request, response) => {
-  const shortUrl = generateRandomString();
-  const templateVars = {
-    shortURL: request.params.shortURL,
-    longURL: urlDatabase[request.params.shortURL].longURL
-  };
-  response.render('urls_show', templateVars);
 });
 
 //REDIRECT FROM TINYAPP TO ACTUAL WEBSITE VIA SHORTURL
