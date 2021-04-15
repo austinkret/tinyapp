@@ -83,8 +83,6 @@ const urlsForUser = (id) => {
   return urlsByUser;
 };
 
-console.log(urlsForUser('BatS9b'));
-
 //////////
 // FUNCTIONS END
 //////////
@@ -216,15 +214,29 @@ app.get('/urls/new', (request, response) => {
   response.render('urls_new', templateVars);
 });
 
-//PAGE FOR SHOWING AND EDITING URLS
+//PAGE FOR EDITING SHORTURLS
 app.get('/urls/:shortURL', (request, response) => {
-  const templateVars = {
-    shortURL: request.params.shortURL,
-    longURL: urlDatabase[request.params.shortURL].longURL,
-    users: users,
-    userid: request.cookies['userid']
-  };
-  response.render('urls_show', templateVars);
+  const userUrls = urlsForUser(request.cookies.userid);
+  const shortURL = request.params.shortURL;
+  
+  if (shortURL in userUrls) {
+    const templateVars = {
+      shortURL: request.params.shortURL,
+      longURL: urlDatabase[request.params.shortURL].longURL,
+      users: users,
+      userid: request.cookies['userid']
+    };
+    response.render('urls_show', templateVars);
+    return;
+  }
+  response.status(404).send('Not Found: This link either does not exist, or you do not have authorization to edit it.');
+  return;
+});
+
+//EDIT/UPDATE SHORT URLS WITH A NEW LONG URL
+app.post('/urls/:shortURL/edit', (request, response) => {
+  urlDatabase[request.params.shortURL].longURL = request.body.longURL;
+  response.redirect(`/urls/`);
 });
 
 //TINYURL GENERATOR TO CREATE SHORT URL
@@ -243,18 +255,32 @@ app.get('/u/:shortURL', (request, response) => {
   response.redirect(longURL);
 });
 
-//DELETE URL FORM THE DATABASE
-app.post('/urls/:shortURL/delete', (request, response) => {
-  const deleteUrl = request.params.shortURL;
-  delete urlDatabase[deleteUrl];
+//GET DELETE URL
+app.get('/urls/:shortURL/delete', (request, response) => {
+  const userUrls = urlsForUser(request.cookies.userid);
+  const shortUrl = request.params.shortURL;
 
-  response.redirect('/urls');
+  if (shortUrl in userUrls) {
+    delete urlDatabase[shortUrl];
+    response.redirect('/urls');
+    return;
+  }
+  response.send('Not Found: This link either does not exist, or you do not have authorization to delete it.');
+  return;
 });
 
-//EDIT/UPDATE SHORT URLS WITH A NEW LONG URL
-app.post('/urls/:shortURL/edit', (request, response) => {
-  urlDatabase[request.params.shortURL].longURL = request.body.longURL;
-  response.redirect(`/urls/`);
+//POST DELETE URL FORM THE DATABASE
+app.post('/urls/:shortURL/delete', (request, response) => {
+  const userUrls = urlsForUser(request.cookies.userid);
+  const shortUrl = request.params.shortURL;
+
+  if (shortUrl in userUrls) {
+    delete urlDatabase[shortUrl];
+    response.redirect('/urls');
+    return;
+  }
+  response.send('Not Found: This link either does not exist, or you do not have authorization to delete it.');
+  return;
 });
 
 //////////
