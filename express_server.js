@@ -104,7 +104,7 @@ app.get('/register', (request, response) => {
     response.redirect('/urls');
     return;
   }
-  
+
   const templateVars = {
     urls: urlDatabase,
     users: users,
@@ -161,7 +161,7 @@ app.post("/login", (request, response) => {
     return response.status(400).send('Bad Request: The email and/or password field is blank.');
   }
 
-  if (userExists === null) {
+  if (!userExists) {
     return response.status(403).send('Forbidden: This account does not exist.');
   }
 
