@@ -126,7 +126,6 @@ app.post('/register', (request, response) => {
     email: request.body.email,
     password: bcrypt.hashSync(password, 10)
   };
-  console.log(newUser);
   users[newUser.id] = newUser;
   request.session.userid = newUser.id;
   response.redirect('/urls');
