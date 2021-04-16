@@ -100,6 +100,11 @@ app.get('/account', (request,response) => {
 
 //REGISTER PAGE
 app.get('/register', (request, response) => {
+  if (request.session.userid) {
+    response.redirect('/urls');
+    return;
+  }
+  
   const templateVars = {
     urls: urlDatabase,
     users: users,
