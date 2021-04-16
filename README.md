@@ -10,10 +10,6 @@ Enough chatter, get to it! Scroll down to getting started so you can... well... 
 
 ## Final Product
 
-!["screenshot description"](https://github.com/austinkret/tinyapp/blob/master/docs/1.%20Home%20Page%20-%20First%20Time.png)
-!["screenshot description"](https://github.com/austinkret/tinyapp/blob/master/docs/2.%20Login%20Page.png)
-!["screenshot description"](https://github.com/austinkret/tinyapp/blob/master/docs/4.%20MyURLs%20Page.png)
-
 ## Dependencies
 
 - Node.js
