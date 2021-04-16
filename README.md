@@ -9,6 +9,11 @@ In order to use the functions of the site, you must register with an email and p
 Enough chatter, get to it! Scroll down to getting started so you can... well... get started!
 
 ## Final Product
+!["Screenshot of URLs page"](https://github.com/austinkret/tinyapp/blob/master/docs/1.%20Home%20Page%20-%20Not%20Logged%20In.png)
+!["Screenshot of URLs page"](https://github.com/austinkret/tinyapp/blob/master/docs/2.%20Login%20Page.png)
+!["Screenshot of URLs page"](https://github.com/austinkret/tinyapp/blob/master/docs/3.%20Home%20Page%20-%20Logged%20In.png)
+!["Screenshot of URLs page"](https://github.com/austinkret/tinyapp/blob/master/docs/4.%20My%20URLs%20-%20Logged%20In.png)
+
 
 ## Dependencies
 
