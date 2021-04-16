@@ -14,7 +14,7 @@ Enough chatter, get to it! Scroll down to getting started so you can... well... 
 !["Screenshot of URLs page"](https://github.com/austinkret/tinyapp/blob/master/docs/3.%20Home%20Page%20-%20Logged%20In.png)
 !["Screenshot of URLs page"](https://github.com/austinkret/tinyapp/blob/master/docs/4.%20My%20URLs%20-%20Logged%20In.png)
 !["Screenshot of URLs page"](https://github.com/austinkret/tinyapp/blob/master/docs/5.%20Create%20New%20URL.png)
-
+!["Screenshot of URLs page"](https://github.com/austinkret/tinyapp/blob/master/docs/6.%20Create%20New%20URL.png)
 
 ## Dependencies
 
