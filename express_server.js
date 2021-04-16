@@ -133,6 +133,10 @@ app.post('/register', (request, response) => {
 
 //LOGIN PAGE
 app.get('/login', (request, response) => {
+  if (request.session.userid) {
+    response.redirect('/urls');
+    return;
+  }
   const templateVars = {
     urls: urlDatabase,
     users: users,
@@ -231,8 +235,14 @@ app.post('/urls/:shortURL/edit', (request, response) => {
 
 //REDIRECT FROM TINYAPP TO ACTUAL WEBSITE VIA SHORTURL
 app.get('/u/:shortURL', (request, response) => {
-  const longURL = urlDatabase[request.params.shortURL].longURL;
-  response.redirect(longURL);
+  const shortURL = request.params.shortURL;
+  
+  if (shortURL in urlDatabase) {
+    const longURL = urlDatabase[request.params.shortURL].longURL;
+    return response.redirect(longURL);
+  } else {
+    return response.status(404).send('Not Found: This link does not exist.');
+  }
 });
 
 //GET DELETE URL
