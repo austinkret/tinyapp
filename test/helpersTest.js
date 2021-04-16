@@ -20,12 +20,12 @@ describe('findUserByEmail', function() {
     const user = findUserByEmail("user@example.com", users);
     const userid = user.id;
     const expectedOutput = "userRandomID";
-    assert.equal(userid, expectedOutput);
+    assert.strictEqual(userid, expectedOutput);
   });
 
   it('should return a undefined if the email does not exist', function() {
     const user = findUserByEmail("notanemail@gexample.com", users);
     const expectedOutput = undefined;
-    assert.equal(user, expectedOutput);
+    assert.strictEqual(user, expectedOutput);
   });
 });
