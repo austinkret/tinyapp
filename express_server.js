@@ -19,37 +19,12 @@ app.use(express.urlencoded({extended: true}));
 
 //DATABASE OF URLS
 const urlDatabase = {
-  "b2xVn2": {longURL: "http://www.lighthouselabs.ca", userID: "Irod0U" },
-  "9sm5xK": {longURL: "http://www.google.com",        userID: "BatS9b" },
-  "He8Kv2":	{longURL: "http://www.superman.com",      userID: "Supk34" },
-  "d92lH4": {longURL: "http://www.youtube.com",       userID: "Irod0U" },
-  "R012jS": {longURL: "http://www.espn.com",          userID: "BatS9b" },
-  "4bLFBN":	{longURL: "http://www.facebook.com",      userID: "Supk34" },
-  "d8E3mS": {longURL: "http://www.twitter.com",       userID: "asIPk0" }
+
 };
 
 //DATABASE OF USERS
 const users = {
-  "Irod0U": {
-    id: "Irod0U",
-    email: "ironman@gmail.com",
-    password: "$2b$10$RV6cAM4NLBq9eZObDo.mneVmrd8TjRl8Iusmoam8kp2ZbcMsw40Ru"
-  },
-  "BatS9b": {
-    id: "BatS9b",
-    email: "batman@gmail.com",
-    password: "$2b$10$hPHWMkndBhQZwOZHDtK/feeMxUPnaKe8fhKA7pwFF3zvZyBsDrI5y"
-  },
-  "Supk34": {
-    id: "Supk34",
-    email: "superman@gmail.com",
-    password: '$2b$10$2Apw3n61k4WFtadZA8ZxYOtJ0rxU1FDzH2LYRs0KM38pq2C1v7NVG'
-  },
-  "asIPk0": {
-    id: "asIPk0",
-    email: "thor@gmail.com",
-    password: "$2b$10$x/sFo64rnGlCjCU1PLiw4.E1wr8t99QLOVHAGguuJVgepebnCvEn6"
-  }
+
 };
 
 //////////
@@ -80,25 +55,27 @@ const urlsForUser = (id) => {
 // ROUTES SECTION
 //////////
 
-//HOMEPAGE
+//GET HOMEPAGE - HOMEPAGE FOR USER TO BE INTRODUCED TO THE SITE, RETURN HERE IF CLICK ON TINYAPP IN HEADER
 app.get('/', (request,response) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
     userid: request.session.userid};
+
   response.render('urls_home', templateVars);
 });
 
-//ACCOUNT PAGE ASKING TO EITHER REGISTER OR SIGN-IN
+//GET ACCOUNT - IF USER NOT LOGGED IN TRIES TO ACCESS MYURLS OR CREATE URLS, REDIRECTED HERE
 app.get('/account', (request,response) => {
   const templateVars = {
     urls: urlDatabase,
     users: users,
     userid: request.session.userid};
+
   response.render('urls_account', templateVars);
 });
 
-//REGISTER PAGE
+//GET REGISTER - REGISTER PAGE
 app.get('/register', (request, response) => {
   if (request.session.userid) {
     response.redirect('/urls');
@@ -109,17 +86,18 @@ app.get('/register', (request, response) => {
     urls: urlDatabase,
     users: users,
     userid: request.session.userid};
+
   response.render('urls_register', templateVars);
 });
 
-//POST REGISTER
+//POST REGISTER - REGISTER AUTHENTICATION
 app.post('/register', (request, response) => {
   const email = request.body.email;
   const password = request.body.password;
   const userExists = findUserByEmail(email, users);
 
   if (!email || !password) {
-    return response.status(400).send('Bad Request: The email and/or password field is blank.');
+    return response.status(400).send('Bad Request: The email and/or password field is blank. Please go back and input your information.');
   }
 
   if (userExists) {
@@ -133,32 +111,34 @@ app.post('/register', (request, response) => {
   };
   users[newUser.id] = newUser;
   request.session.userid = newUser.id;
+
   response.redirect('/urls');
 });
 
-//LOGIN PAGE
+//GET LOGIN - LOGIN PAGE
 app.get('/login', (request, response) => {
   if (request.session.userid) {
     response.redirect('/urls');
     return;
   }
+
   const templateVars = {
     urls: urlDatabase,
     users: users,
     userid: request.session.userid
   };
+
   response.render('urls_login', templateVars);
 });
 
-//LOGIN BUTTON REDIRECT
+//POST LOGIN - LOGIN AUTHENTICATION
 app.post("/login", (request, response) => {
   const email = request.body.email;
   const password = request.body.password;
-
   const userExists = findUserByEmail(email, users);
 
   if (!email || !password) {
-    return response.status(400).send('Bad Request: The email and/or password field is blank.');
+    return response.status(400).send('Bad Request: The email and/or password field is blank. Please go back and input your information.');
   }
 
   if (!userExists) {
@@ -170,12 +150,12 @@ app.post("/login", (request, response) => {
   }
 
   request.session.userid = userExists.id;
+
   response.redirect('/urls');
 });
 
-//MYURLS PAGE
+//GET URLS - LIST OF SHORT URLS CREATED
 app.get('/urls', (request, response) => {
-  //if they are not signed, redirect to the account page
   if (!request.session.userid) {
     response.redirect('/account');
     return;
@@ -185,12 +165,14 @@ app.get('/urls', (request, response) => {
     users: users,
     userid: request.session.userid
   };
+
   response.render('urls_index', templateVars);
 });
 
-//TINYURL GENERATOR TO CREATE SHORT URL
+//POST URLS - GENERATE RANDOM SHORT URL STRING
 app.post('/urls', (request, response) => {
   const shortUrl = generateRandomString();
+
   urlDatabase[shortUrl] = {};
   urlDatabase[shortUrl].longURL = request.body.longURL;
   urlDatabase[shortUrl].userID = request.session.userid;
@@ -198,9 +180,8 @@ app.post('/urls', (request, response) => {
   response.redirect(`/urls`);
 });
 
-//INPUT NEW URLS TO BE SHORTENED
+//GET NEW URLS - CREATE NEW SHORT URL PAGE
 app.get('/urls/new', (request, response) => {
-  //if they are not signed, redirect to the account page
   if (!request.session.userid) {
     response.redirect('/account');
     return;
@@ -210,10 +191,11 @@ app.get('/urls/new', (request, response) => {
     users: users,
     userid: request.session.userid
   };
+
   response.render('urls_new', templateVars);
 });
 
-//PAGE FOR EDITING SHORTURLS
+//GET URLS/:SHORTURL - VIEW AND EDIT SHORT URLS CREATED
 app.get('/urls/:shortURL', (request, response) => {
   const userUrls = urlsForUser(request.session.userid);
   const shortURL = request.params.shortURL;
@@ -225,20 +207,22 @@ app.get('/urls/:shortURL', (request, response) => {
       users: users,
       userid: request.session.userid
     };
+
     response.render('urls_show', templateVars);
     return;
   }
+
   response.status(404).send('Not Found: This link either does not exist, or you do not have authorization to edit it.');
   return;
 });
 
-//EDIT/UPDATE SHORT URLS WITH A NEW LONG URL
+//POST URLS/:SHORTURL - EDIT/UPDATE SHORT URLS WITH A NEW LONG URL, REDIRECT TO URLS PAGE
 app.post('/urls/:shortURL/edit', (request, response) => {
   urlDatabase[request.params.shortURL].longURL = request.body.longURL;
-  response.redirect(`/urls/`);
+  response.redirect('/urls');
 });
 
-//REDIRECT FROM TINYAPP TO ACTUAL WEBSITE VIA SHORTURL
+//GET U/:SHORTURLS - REDIRECT FROM TINYAPP TO ACTUAL WEBSITE VIA SHORTURL
 app.get('/u/:shortURL', (request, response) => {
   const shortURL = request.params.shortURL;
   
@@ -250,7 +234,7 @@ app.get('/u/:shortURL', (request, response) => {
   }
 });
 
-//GET DELETE URL
+//GET DELETE URL - DELETE THE URL
 app.get('/urls/:shortURL/delete', (request, response) => {
   const userUrls = urlsForUser(request.session.userid);
   const shortUrl = request.params.shortURL;
@@ -264,7 +248,7 @@ app.get('/urls/:shortURL/delete', (request, response) => {
   return;
 });
 
-//POST DELETE URL FORM THE DATABASE
+//POST DELETE URL - DELETE THE URL
 app.post('/urls/:shortURL/delete', (request, response) => {
   const userUrls = urlsForUser(request.session.userid);
   const shortUrl = request.params.shortURL;
@@ -274,14 +258,16 @@ app.post('/urls/:shortURL/delete', (request, response) => {
     response.redirect('/urls');
     return;
   }
+
   response.send('Not Found: This link either does not exist, or you do not have authorization to delete it.');
   return;
 });
 
-//LOGOUT BUTTON RE-DIRECT
+//POST LOGOUT - LOGOUT BUTTON RE-DIRECT TO DEFAULT ACCOUNT PAGE
 app.post("/logout", (request, response) => {
   request.session = null;
-  response.redirect("/urls");
+  
+  response.redirect("/account");
 });
 
 //////////
