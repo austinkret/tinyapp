@@ -3,7 +3,7 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const { findUserByEmail, generateRandomString } = require('./helper');
 const app = express();
-const PORT = 8080;
+const PORT = 3000;
 
 //ENGINES AND MIDDLEWARE
 app.set('view engine', 'ejs');
@@ -228,10 +228,13 @@ app.get('/u/:shortURL', (request, response) => {
   
   if (shortURL in urlDatabase) {
     const longURL = urlDatabase[request.params.shortURL].longURL;
-    return response.redirect(longURL);
-  } else {
-    return response.status(404).send('Not Found: This link does not exist.');
+    if (longURL.substring(0, 7) !== 'http://') {
+      return response.redirect(`http://${longURL}`);
+    } else {
+      return response.redirect(longURL);
+    }
   }
+  return response.status(404).send('Not Found: This link does not exist.');
 });
 
 //GET DELETE URL - DELETE THE URL
