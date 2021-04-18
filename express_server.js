@@ -78,8 +78,7 @@ app.get('/account', (request,response) => {
 //GET REGISTER - REGISTER PAGE
 app.get('/register', (request, response) => {
   if (request.session.userid) {
-    response.redirect('/urls');
-    return;
+    return response.redirect('/urls');
   }
 
   const templateVars = {
@@ -118,8 +117,7 @@ app.post('/register', (request, response) => {
 //GET LOGIN - LOGIN PAGE
 app.get('/login', (request, response) => {
   if (request.session.userid) {
-    response.redirect('/urls');
-    return;
+    return response.redirect('/urls');
   }
 
   const templateVars = {
@@ -157,8 +155,7 @@ app.post("/login", (request, response) => {
 //GET URLS - LIST OF SHORT URLS CREATED
 app.get('/urls', (request, response) => {
   if (!request.session.userid) {
-    response.redirect('/account');
-    return;
+    return response.redirect('/account');
   }
   const templateVars = {
     urls: urlDatabase,
@@ -183,8 +180,7 @@ app.post('/urls', (request, response) => {
 //GET NEW URLS - CREATE NEW SHORT URL PAGE
 app.get('/urls/new', (request, response) => {
   if (!request.session.userid) {
-    response.redirect('/account');
-    return;
+    return response.redirect('/account');
   }
 
   const templateVars = {
@@ -208,12 +204,10 @@ app.get('/urls/:shortURL', (request, response) => {
       userid: request.session.userid
     };
 
-    response.render('urls_show', templateVars);
-    return;
+    return response.render('urls_show', templateVars);
   }
 
-  response.status(404).send('Not Found: This link either does not exist, or you do not have authorization to edit it.');
-  return;
+  return response.status(404).send('Not Found: This link either does not exist, or you do not have authorization to edit it.');
 });
 
 //POST URLS/:SHORTURL - EDIT/UPDATE SHORT URLS WITH A NEW LONG URL, REDIRECT TO URLS PAGE
@@ -244,11 +238,9 @@ app.get('/urls/:shortURL/delete', (request, response) => {
 
   if (shortUrl in userUrls) {
     delete urlDatabase[shortUrl];
-    response.redirect('/urls');
-    return;
+    return response.redirect('/urls');
   }
-  response.send('Not Found: This link either does not exist, or you do not have authorization to delete it.');
-  return;
+  return response.send('Not Found: This link either does not exist, or you do not have authorization to delete it.');
 });
 
 //POST DELETE URL - DELETE THE URL
@@ -258,12 +250,10 @@ app.post('/urls/:shortURL/delete', (request, response) => {
 
   if (shortUrl in userUrls) {
     delete urlDatabase[shortUrl];
-    response.redirect('/urls');
-    return;
+    return response.redirect('/urls');
   }
 
-  response.send('Not Found: This link either does not exist, or you do not have authorization to delete it.');
-  return;
+  return response.send('Not Found: This link either does not exist, or you do not have authorization to delete it.');
 });
 
 //POST LOGOUT - LOGOUT BUTTON RE-DIRECT TO DEFAULT ACCOUNT PAGE
